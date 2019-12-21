@@ -1,4 +1,5 @@
 #include<GL/glut.h>
+#include<iostream>
 #include<cmath>
 #include<vector>
 #include<array>
@@ -13,12 +14,12 @@ class Point{
 private:
   array<T,n> elements_;
 public:
-  Point(int x, int y) {
+  Point(T x, T y) {
     STATIC_ASSERT( n == 2 );
     elements_[0] = x;
       elements_[1] = y;
   }
-  Point(int x, int y, int z) {
+  Point(T x, T y, T z) {
     STATIC_ASSERT( n == 3 );
     elements_[0] = x;
     elements_[1] = y;
@@ -26,15 +27,15 @@ public:
   }
   ~Point() {}
   array<T,n>& get() {return this->elements_;}
-  T& operator[](int const i) { return elements_[i];}
-  T const& operator[](int const i) const { return elements_[i];}
+  T& operator[](T const i) { return elements_[i];}
+  T const& operator[](T const i) const { return elements_[i];}
 };
 
-typedef Point<int,2> Point2D;
-typedef Point<int,3> Point3D;
+typedef Point<float,2> Point2D;
+typedef Point<float,3> Point3D;
 typedef vector<Point2D> vp2D;
 typedef vector<Point3D> vp3D;
-/*
+
 ostream& operator<<(ostream& stream, Point2D const& point) {
   return (stream << "(" << point[0] << ", " << point[1] << ")");
 }
@@ -42,7 +43,7 @@ ostream& operator<<(ostream& stream, Point2D const& point) {
 ostream& operator<<(ostream& stream, Point3D const& point) {
   return (stream << "(" << point[0] << ", " << point[1] << ", " << point[2] << ")");
 }
-*/
+
 inline int Round(const float p) { return int (p + 0.5); }
 
 void lineDDA(int x0, int y0, int xEnd, int yEnd, vp2D &line){
@@ -146,26 +147,20 @@ void traslation(vp2D &vertexs, float s1, float s2){
 
 void rotation(vp2D &vertexs, float angle){
   for(auto &point: vertexs) {
-    int x,y;
+    float x,y;
     x = point[0];
     y = point[1];
-    point[0] = x*cos(angle*PI/180.0) - y*sin(angle*PI/180.0);
-    point[1] = x*sin(angle*PI/180.0) - y*cos(angle*PI/180.0);
+    point[0] = x*cos(angle) - y*sin(angle);
+    point[1] = x*sin(angle) - x*cos(angle);
   }
 }
 
-void rotation(vp2D &vertexs, float angle, Point2D p){
-  int x,y,xc=p[0],yc=p[1];
-  Point2D pivot = vertexs[vertexs.size()-1];
-  for(auto &point: vertexs) {
-    x = point[0] - xc;
-    y = point[1] - yc;
-    int nangle = angle;
-    if(pivot[0] < point[0] && pivot[1] > point[1])
-      nangle = 360-angle;
-    pivot = point;
-    point[0] = xc + x*cos(nangle*PI/180.0) - y*sin(nangle*PI/180.0);
-    point[1] = yc + x*sin(nangle*PI/180.0) - y*cos(nangle*PI/180.0);
+void rotation(vp2D &vertexs, float angle, const Point2D p){
+  for(auto &pts: vertexs){
+    float dx = pts[0] - p[0];
+    float dy = pts[1] - p[1];
+    pts[0] = p[0] + (dx*cos(angle) - dy*sin(angle));
+    pts[1] = p[0] + (dx*sin(angle) - dy*cos(angle));
   }
 }
 

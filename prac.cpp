@@ -7,9 +7,6 @@
 #else
 #include <GL/glut.h>
 #endif
-#include<iostream>
-
-using namespace std;
 
 void display();
 void specialKeys(int,int,int);
@@ -26,9 +23,7 @@ int main(int argc, char **argv){
   glEnable(GL_DEPTH_TEST);
   glutDisplayFunc(display);
   glutSpecialFunc(specialKeys);
-  int x,y;
-  glutWarpPointer(x,y);
-  cout<<x<<' '<<y<<endl;
+
   glutMainLoop();
   return 0;
 }
